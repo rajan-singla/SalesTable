@@ -1,11 +1,8 @@
 const express = require('express');
 const app=express();
-
-const date = require('date-and-time');
 const moment = require('moment');
 const router = express.Router();
 const bodyparser = require('body-parser');
-const common_functions = require("../utils/common_functions");
 
 //MODAL
 const SALES_TABLE = require('./../Models/salesTableSchema');
@@ -53,15 +50,13 @@ router.get('/fetch_stats/:query',async (req,res) =>{
     const endOfMonth = moment().clone().endOf('month').toDate();
     const startOfYear = moment().clone().startOf('year').toDate();
     const endOfYear = moment().clone().endOf('year').toDate();
-
-    console.log(startOfYear);
-    console.log(endOfYear);
     
     let totalAmount = 0;
     let totalHours = 24;
 
-    var dataByHours = [];
-    const today = moment().startOf('day')
+    //to store the final result 
+    var data = [];
+    const today = moment().startOf('day');
 
     //On the basis of each hour 
     if(req.params.query == 'daily'){
@@ -90,19 +85,18 @@ router.get('/fetch_stats/:query',async (req,res) =>{
                 totalAmount = 0;
                 //For getting the amount based on hours
                 result.forEach(element => {
-                    console.log(element);
                     if(i == element.date.getHours()){
                         totalAmount += element.amount;
                     }
                 });
 
-                dataByHours.push({hour: i + ":00 to " + (i+1)+ ":00",amount: totalAmount});
+                data.push({hour: i + ":00 to " + (i+1)+ ":00",amount: totalAmount});
             }
 
             return res.json({
                     status: true,
                     message: 'Amount is successfully fetched',
-                    result: dataByHours
+                    result: data
                 });
         });
     }else if(req.params.query == 'weekly'){
@@ -130,7 +124,6 @@ router.get('/fetch_stats/:query',async (req,res) =>{
 
             for (var m = moment(startOfWeek); m.isBefore(endOfWeek); m.add(1, 'days')) {
                 totalAmount = 0;
-
                 //For getting the amount based on weekdays
                 result.forEach(element => {
                     if(m.day() == element.date.getDay()){
@@ -138,13 +131,13 @@ router.get('/fetch_stats/:query',async (req,res) =>{
                     }
                 });
 
-                dataByHours.push({weekday: m.format('dddd'),amount: totalAmount});
+                data.push({weekday: m.format('dddd'),amount: totalAmount});
             }
 
             return res.json({
                     status: true,
                     message: 'Amount is successfully fetched',
-                    result: dataByHours
+                    result: data
                 });
         });
     }else if(req.params.query == 'monthly'){
@@ -170,7 +163,6 @@ router.get('/fetch_stats/:query',async (req,res) =>{
 
             for (var m = moment(startOfMonth); m.isBefore(endOfMonth); m.add(1, 'months')) {
                 totalAmount = 0;
-                console.log(m.month());
 
                 //For getting the amount based on weekdays
                 result.forEach(element => {
@@ -179,12 +171,12 @@ router.get('/fetch_stats/:query',async (req,res) =>{
                     }
                 });
 
-                dataByHours.push({month: m.format('MMMM'),amount: totalAmount});
+                data.push({month: m.format('MMMM'),amount: totalAmount});
             }
             return res.json({
                     status: true,
                     message: 'Amount is successfully fetched',
-                    result: dataByHours
+                    result: data
                 });
         });
     }else if(req.params.query == 'yearly'){
@@ -219,12 +211,12 @@ router.get('/fetch_stats/:query',async (req,res) =>{
                     }
                 });
 
-                dataByHours.push({month: m.format('MMMM'),amount: totalAmount});
+                data.push({month: m.format('MMMM'),amount: totalAmount});
             }
             return res.json({
                     status: true,
                     message: 'Amount is successfully fetched',
-                    result: dataByHours
+                    result: data
                 });
         });
     }
