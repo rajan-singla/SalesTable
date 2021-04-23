@@ -54,15 +54,10 @@ router.get('/fetch_stats/:query',async (req,res) =>{
     const startOfYear = moment().clone().startOf('year').toDate();
     const endOfYear = moment().clone().endOf('year').toDate();
 
-    // for (var m = moment(startOfWeek); m.isBefore(endOfWeek); m.add(1, 'days')) {
-    //    // console.log(m.format('dddd'));
-    //     }
-
     console.log(startOfYear);
     console.log(endOfYear);
     
     let totalAmount = 0;
-    //let today;
     let totalHours = 24;
 
     var dataByHours = [];
@@ -233,8 +228,6 @@ router.get('/fetch_stats/:query',async (req,res) =>{
                 });
         });
     }
-
-
 }); 
 
 
